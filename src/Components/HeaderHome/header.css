@@ -1,0 +1,75 @@
+.heaver-container {
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+    background: url('../../images/simpsons.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: top;
+    padding: 20px;
+}
+
+.header-nav {
+    display: flex;
+    justify-content: space-between;
+    height: fit-content;
+}
+
+.header-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin: 0 10px;
+}
+
+
+.header-title {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.header-title-mobile {
+    color: black;
+    text-align: center;
+}
+
+.header-title h1 {
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    font-family: "Fuzzy Bubbles", sans-serif;
+    
+}
+
+.header-btn {
+    padding: 5px 18px;
+    margin: 15px 0;
+    font-family: "Fuzzy Bubbles", sans-serif;
+    color: #fff;
+    border: 1px solid #fff;
+    font-size: 1rem;
+}
+
+.header-btn:hover {
+    background-color: #1a0279;
+}
+
+@media (min-width: 780px) {
+    .header-btn {
+        background-color: transparent;
+        border: 1px solid #fff;
+        color: #fff;
+        height: fit-content;
+        padding: 5px 8px;
+        font-family: "Fuzzy Bubbles", sans-serif;
+    }
+    .header-title {
+
+        align-items: start;
+        
+    }
+}

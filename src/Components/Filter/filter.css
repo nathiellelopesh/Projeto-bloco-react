@@ -1,0 +1,44 @@
+.filter {
+    background-color: #b2c9da;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+    gap: 10px;
+}
+
+.filter > p {
+    font-family: "Fuzzy Bubbles", sans-serif;
+}
+
+.filter > input, select {
+    padding: 5px;
+    border-radius: 5px;
+    border: none;
+
+}
+
+.filter-btn {
+    background-color: #1a0279;
+    padding: 5px 18px;
+    margin: 15px 0;
+    font-family: "Fuzzy Bubbles", sans-serif;
+    color: #fff;
+    border: none;
+    font-size: 1rem;
+}
+
+.filter-btn:hover {
+    background-color: #2704b6;
+}
+
+@media(min-width: 700px) {
+    .filter {
+        width: 75vw;
+        margin: 30px auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+
+    }
+}

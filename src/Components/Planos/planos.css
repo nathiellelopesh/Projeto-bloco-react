@@ -1,0 +1,53 @@
+.planos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin: 50px 0;
+}
+
+.planos-item {
+    border: 1px solid #1a0279;
+    width: 80vw;
+    
+    padding: 10px;
+    text-align: center;
+}
+
+.planos-item > span, p {
+    color: #6852c0;
+    font-weight: bold;
+}
+
+.planos-item > span {
+    display: flex;
+    justify-content: left;
+    padding-left: 30px;
+}
+
+.planos-item > ul > li {
+    padding: 10px 0;
+    text-align: left;
+}
+
+.planos-btn {
+    background-color: #1a0279;
+    padding: 5px 18px;
+    margin: 15px 0;
+    font-family: "Fuzzy Bubbles", sans-serif;
+    color: #fff;
+    border: none;
+    font-size: 1rem;
+}
+
+.planos-btn:hover {
+    background-color: #2704b6;
+}
+
+@media (min-width: 600px) {
+    .planos-item {
+        width: 400px;
+        height: 330px;
+    }
+}

@@ -1,0 +1,26 @@
+.user-page {
+    display: flex;
+    flex-direction: column;
+}
+
+.filteredList-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 55vh;
+}
+
+.quizz-next-btn {
+    background-color: #1a0279;
+    padding: 5px 18px;
+    font-family: "Fuzzy Bubbles", sans-serif;
+    color: #fff;
+    border: 1px solid #fff;
+    font-size: 1rem;
+    margin-bottom: 30px;
+}
+
+.quizz-next-btn:hover {
+    background-color: #2704b6;
+}

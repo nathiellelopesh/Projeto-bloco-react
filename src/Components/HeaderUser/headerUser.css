@@ -1,0 +1,6 @@
+.headerUser-container {
+    display: flex;
+    justify-content: space-between;
+    background-color: #1a0279;
+    padding: 20px 35px;
+}
