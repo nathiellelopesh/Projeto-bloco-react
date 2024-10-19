@@ -17,7 +17,7 @@
 
 }
 
-.filter-btn {
+.filter_btn {
     background-color: #1a0279;
     padding: 5px 18px;
     margin: 15px 0;
@@ -25,11 +25,9 @@
     color: #fff;
     border: none;
     font-size: 1rem;
+    display: none;
 }
 
-.filter-btn:hover {
-    background-color: #2704b6;
-}
 
 @media(min-width: 700px) {
     .filter {

@@ -1,212 +1,231 @@
-import { useState, useEffect } from 'react'
-import Filter from '../../Components/Filter/Filter'
-import HeaderUser from '../../Components/HeaderUser/HeaderUser'
-import './quizz.css'
-import Quizz1 from '../../Components/Quizz1/Quizz1'
-import Footer from '../../Components/Footer/Footer'
-
-const data = {
-    "filmes": [
-      {
-        "nome": "Inception",
-        "ano": "2010",
-        "genero": "Ficção Científica",
-        "palavras": ["sonhos", "realidade", "tecnologia", "ação"],
-        "poster": "https://m.media-amazon.com/images/S/pv-target-images/e826ebbcc692b4d19059d24125cf23699067ab621c979612fd0ca11ab42a65cb._SX1080_FMjpg_.jpg"
-      },
-      {
-        "nome": "Parasite",
-        "ano": "2019",
-        "genero": "Drama",
-        "palavras": ["classes sociais", "suspense", "família"],
-        "poster": "https://media.newyorker.com/photos/5da4a5c756dcd400082a63ba/master/pass/Brody-Parasite.jpg"
-      },
-      {
-        "nome": "The Matrix",
-        "ano": "1999",
-        "genero": "Ação/Ficção Científica",
-        "palavras": ["realidade virtual", "luta", "filosofia"],
-        "poster": "https://rollingstone.com.br/media/_versions/2024/04/matrix-5-esta-em-desenvolvimento-mas-nao-tera-irmas-wachowski-na-direcao-foto-divulgacaowarner-bros-pictures_widelg.jpg"
-      },
-      {
-        "nome": "The Shawshank Redemption",
-        "ano": "1994",
-        "genero": "Drama",
-        "palavras": ["esperança", "prisão", "amizade"],
-        "poster": "https://media.vanityfair.com/photos/541c841b1019a3955fea0c58/master/w_2560%2Cc_limit/shawshank-redemption-20th-anniversary-01.jpg"
-      },
-      {
-        "nome": "Interstellar",
-        "ano": "2014",
-        "genero": "Ficção Científica",
-        "palavras": ["viagem espacial", "amor", "tempo"],
-        "poster": "https://www.esquerda.net/sites/default/files/styles/imagem_principal_500/public/bg_0.jpg.webp?itok=oJCY9L_g"
-      }
-    ],
-    "series": [
-      {
-        "nome": "Breaking Bad",
-        "ano": "2008",
-        "genero": "Crime/Drama",
-        "palavras": ["química", "criminalidade", "transformação"],
-        "poster": "https://monkeybuzz.com.br/wp-content/uploads/2015/02/breaking-bad-season-51-647x430.jpg"
-      },
-      {
-        "nome": "Stranger Things",
-        "ano": "2016",
-        "genero": "Ficção Científica/Horror",
-        "palavras": ["anos 80", "misterio", "paranormal"],
-        "poster": "https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/12/stranger-things-ultima-temporada.webp"
-      },
-      {
-        "nome": "Game of Thrones",
-        "ano": "2011",
-        "genero": "Fantasia",
-        "palavras": ["realeza", "guerra", "intriga"],
-        "poster": "https://institutoconectomus.com.br/wp-content/uploads/2021/09/csm_Game-of-Thrones-19_49e96a78b5.jpg"
-      },
-      {
-        "nome": "The Crown",
-        "ano": "2016",
-        "genero": "Drama",
-        "palavras": ["história", "monarquia", "política"],
-        "poster": "https://veja.abril.com.br/wp-content/uploads/2016/11/the-crown.jpg?quality=70&strip=all%201376915"
-      },
-      {
-        "nome": "The Mandalorian",
-        "ano": "2019",
-        "genero": "Aventura/Fantasia",
-        "palavras": ["Star Wars", "caçador de recompensas", "galáxia"],
-        "poster": "https://lumiere-a.akamaihd.net/v1/images/the_mandalorian_s3_ep5_front_3272026a.jpeg?region=154,0,892,502"
-      }
-    ]
-  }
+import { useState, useEffect } from 'react';
+import Filter from '../../Components/Filter/Filter';
+import HeaderUser from '../../Components/HeaderUser/HeaderUser';
+import Footer from '../../Components/Footer/Footer';
+import axios from 'axios';
+import Quizz1 from '../../Components/Quizz1/Quizz1';
+import Quizz2 from '../../Components/Quizz2/Quizz2';
+import styles from './index.module.css'
 
 export default function Quizz() {
     const [ano, setAno] = useState('');
-    const [nome, setNome] = useState('');
     const [genero, setGenero] = useState('');
-    const [categoria, setCategoria] = useState('');
+    const [categoria, setCategoria] = useState('series');
     const [filteredList, setFilteredList] = useState([]);
-    const [quizzIndex, setQuizzIndex] = useState(0)
-    const [scoreTotal, setScoreTotal] = useState(0)
-    const [quizFinished, setQuizFinished] = useState(false);
-    const [palavrasList, setPalavrasList] = useState([]);
+    const [showDetails, setShowDetails] = useState([]);
+    const [showId, setShowId] = useState(null)
+    const [genreListId, setGenreListId] = useState([]);
+    const [loading, setLoading] = useState(false);
+    
+    const private_key = import.meta.env.VITE_PRIVATE_API_KEY;
 
-    const palavrasAleatorias = () => {
-      const palavrasList = [];
-      const totalFilmes = data.filmes.length;
-      const totalSeries = data.series.length;
-      
-      for (let i = 0; i < 2; i++) {
-        const filmeAleatorioIndex = Math.floor(Math.random() * totalFilmes);
-        const palavraAleatoriaIndex = Math.floor(Math.random() * data.filmes[filmeAleatorioIndex].palavras.length);
-        const palavraFilme = data.filmes[filmeAleatorioIndex].palavras[palavraAleatoriaIndex];
-        palavrasList.push(palavraFilme);
+    const tmdbApi = axios.create({
+      baseURL: "https://api.themoviedb.org/3",
+      params: {
+        api_key: private_key,
+        language: 'en-US'
       }
-    
-      for (let i = 0; i < 2; i++) {
-        const serieAleatorioIndex = Math.floor(Math.random() * totalSeries);
-        const palavraAleatoriaIndex = Math.floor(Math.random() * data.series[serieAleatorioIndex].palavras.length);
-        const palavraSerie = data.series[serieAleatorioIndex].palavras[palavraAleatoriaIndex];
-        palavrasList.push(palavraSerie);
+    });
+
+    async function fetchGenreList() {
+      try {
+        const currentCategory = categoria === 'movies' ? 'movie' : 'tv';
+        const response = await tmdbApi.get(`/genre/${currentCategory}/list?language=en`);
+        return response.data.genres; // Retorna a lista de gêneros com id e nome
+      } catch (error) {
+        console.error("Erro ao buscar a lista de gêneros", error);
       }
-    
-      return palavrasList;
-    };
-    
+    }
     
     useEffect(() => {
-      if (filteredList.length > 0 && quizzIndex < filteredList.length) {
-          // Gera palavras aleatórias apenas quando o quizzIndex muda
-          setPalavrasList(palavrasAleatorias());
+      async function getGenres() {
+        const genres = await fetchGenreList();
+        setGenreListId(genres);
+        //console.log("generos:", genres)
       }
-  }, [quizzIndex, filteredList]);
+      getGenres();
+    }, []);
 
+    let generoId = null;
 
-    function filtrarFilmes(ev) {
-      ev.preventDefault();
-      let filtered = [...data.filmes, ...data.series];
-
-      if (ano) {
-        filtered = filtered.filter(item => item.ano === ano);
-      }
-      if (nome) {
-        filtered = filtered.filter(item => item.nome.toLowerCase().includes(nome.toLowerCase()));
-      }
-      if (genero) {
-        filtered = filtered.filter(item => item.genero === genero);
-      }
-      if (categoria) {
-        if (categoria === 'filmes') {
-          filtered = filtered.filter(item => data.filmes.includes(item));
-        } else if (categoria === 'series') {
-          filtered = filtered.filter(item => data.series.includes(item));
+    if (genreListId) {
+      for (let i = 0; i < genreListId.length; i++) {
+        if (genero === genreListId[i].name) {
+          generoId = genreListId[i].id;
+          break; // Encontrou o gênero, pode sair do loop
         }
       }
-
-      setFilteredList(filtered);
-      console.log(ano, nome, genero, categoria)
-
-      setAno('')
-      setNome('')
-      setGenero('')
-      setCategoria('')
-      setQuizzIndex(0)
-      setScoreTotal(0)
-      setQuizFinished(false);
     }
 
+    async function moviesList() { 
+      let response = ''
+      try {
+        if(ano && !genero) {
+          response = await tmdbApi.get(`/discover/movie?include_adult=false&include_video=true&language=en-US&page=1&sort_by=popularity.desc&year=${ano}`)
+        } else if (!ano && genero) {
+          response = await tmdbApi.get(`/discover/movie?include_adult=false&include_video=true&language=en-US&page=1&sort_by=popularity.desc&with_genres=${generoId}`)
+        } else if (ano && genero) {
+          response = await tmdbApi.get(`/discover/movie?include_adult=false&include_video=true&language=en-US&page=1&sort_by=popularity.desc&with_genres=${generoId}&year=${ano}`)
+        }
+        
+        //console.log(response.data);
+        return response;
+      } catch (error) {
+        console.error("Erro em moviesList", error);
+      }
+    }
+
+    async function seriesList() { 
+      let response = ''
+      try {
+        if(ano && !genero) {
+          response = await tmdbApi.get(`/discover/tv?first_air_date_year=${ano}&include_adult=false&include_null_first_air_dates=false&language=en-US&page=1&sort_by=popularity.desc`)
+        }else if (!ano && genero) {
+          response = await tmdbApi.get(`/discover/tv?include_adult=false&include_null_first_air_dates=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=${generoId}`)
+        } else if (ano && genero) {
+          response = await tmdbApi.get(`/discover/tv?first_air_date_year=${ano}&include_adult=false&include_null_first_air_dates=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=${generoId}`)
+        }
+        
+        console.log("lista de séries: ", response.data.results);
+        return response;
+      } catch (error) {
+        console.error("Erro em seriesList", error);
+      }
+    }
+    
+
+    async function fetchAllData() {
+      setFilteredList([]);
+      setLoading(true);
+      try {
+
+        const moviesResponse = await moviesList();
+        const serieResponse = await seriesList();
+
+        let allResults = [];
+
+        // Verifique se moviesResponse não é nulo antes de acessar os dados
+        if(categoria === 'movies') {
+            allResults = [...(moviesResponse && moviesResponse.data ? moviesResponse.data.results : [])]
+        } else if (categoria === 'series') {
+          
+            allResults = [...(serieResponse && serieResponse.data ? serieResponse.data.results : [])];
+          
+        }
+
+        setFilteredList(allResults);
+
+        console.log('All Results:', allResults);
+
+        if (allResults.length > 0) {
+          setShowId(allResults[0].id);
+        } else {
+          console.log('Nenhum resultado encontrado.');
+        }
+        
+      } catch (error) {
+        console.log("Error fetching data", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    useEffect(() => {
+      fetchAllData() 
+    }, [ano, genero, categoria])
+
+    async function movieDetails() {
+      if (showId) {
+        try {
+          const response = await tmdbApi.get(`/movie/${showId}?language=en-US`);
+          //console.log("Detalhes do filme",response.data);
+
+          if(categoria === 'movies') {setShowDetails(response.data)}
+          
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+
+    async function serieDetails() {
+      if (showId) {
+        try {
+          const response = await tmdbApi.get(`/tv/${showId}?language=en-US`)
+          console.log("Detalhes da série", response.data);
+
+          if(categoria === 'series') {setShowDetails(response.data)}
+        } catch (error) {
+          console.log("erro ao achar detalhes da série", error)
+        }
+      }
+    }
+
+    useEffect(() => {
+      movieDetails()
+      serieDetails()
+    }, [showId])
+
     const handleNext = () => {
-
-      if(filteredList.length > 0 && filteredList.length > quizzIndex)
-      setQuizzIndex(quizzIndex + 1);
-      else if (filteredList.length > quizzIndex) {
-        alert("Não tem mais perguntas do quizz");
+      const currentIndex = filteredList.findIndex(show => show.id === showId);
+      if (currentIndex >= 0 && currentIndex < 5) {
+        // Define o próximo showId com base no próximo item da lista
+        setShowId(filteredList[currentIndex + 1].id);
+      } else {
+        alert("Não há mais perguntas.");
       }
     };
-
-    const handleScoreUpdate = (score) => {
-      setScoreTotal(scoreTotal + score);
-      if (quizzIndex >= filteredList.length - 1) {
-        setScoreTotal(scoreTotal + score);
-          setQuizFinished(true);
-      }
-      console.log(score)
-    };
-
-  
 
     return (
-        <section className='user-page'>
+        <section className={styles.user_page}>
         <HeaderUser/>
-        <Filter ano={ano} setAno={setAno} nome={nome} setNome={setNome} genero={genero} setGenero={setGenero} categoria={categoria} setCategoria={setCategoria} filtrar={filtrarFilmes}/>
+        <Filter
+          ano={ano}
+          setAno={setAno}
+          tmdbApi={tmdbApi}
+          genero={genero}
+          setGenero={setGenero}
+          categoria={categoria}
+          setCategoria={setCategoria}
+          filtrar={(event) => {event.preventDefault(); fetchAllData()} }
+        />
         
-        <div className='filteredList-container'>
-        {quizFinished ? (<p>Pontos: Em breve essa funcionalidade será implementada</p>) : (
-        filteredList.length > 0 ? (
-          <>
-          <Quizz1
-              key={quizzIndex}
-              image={filteredList[quizzIndex].poster}
-              palavra1={palavrasList[0]}
-              palavra2={palavrasList[1]}
-              palavra3={palavrasList[2]}
-              palavra4={palavrasList[3]}
-              palavra5={filteredList[quizzIndex].palavras[0]}
-              palavra6={filteredList[quizzIndex].palavras[1]}
-              scoredPoints={handleScoreUpdate}
-              
-          />
-          <button className='quizz-next-btn' onClick={handleNext}>
-              Próximo
-          </button>
-          </>
-        ) : (
-          <p>Nenhum resultado encontrado</p>
-        )
-        )}
+        <div className={styles.filteredList_container}>
+
+          {loading ? (<p>LOADING...</p>) : (filteredList.length > 0 ? (
+              <>
+              {/*<Quizz1
+                key={showDetails.id}
+                image={showDetails.poster_path ? `https://image.tmdb.org/t/p/w500${showDetails.poster_path}` : 'placeholder-image-url'} 
+                nome={showDetails.title}
+                handleNext={handleNext}
+                nextQuestion={() => handleNext()}
+                showId={showId}
+                filteredList={filteredList}
+                tmdbApi={tmdbApi}
+                categoria={categoria}
+              />*/}
+
+              <Quizz2
+                key={showDetails.id} 
+                
+                handleNext={handleNext}
+                nextQuestion={() => handleNext()}
+                showId={showId}
+                filteredList={filteredList}
+                tmdbApi={tmdbApi}
+                categoria={categoria}
+              />
+
+              </>
+          ) : (
+            <p>Not Found</p>
+          )
+          )}
         </div>
+
+        
+
         <Footer/>
         </section>
     )
