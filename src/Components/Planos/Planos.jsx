@@ -1,12 +1,12 @@
-import "./planos.css"
+import styles from './index.module.css'
 
 export default function Planos() {
     return (
-        <section className="planos">
-            <div className="planos-item">
+        <section className={styles.planos}>
+            <div className={styles.planos_item}>
                 <h2>Plano Básico</h2>
                 <span>R$</span>
-                <p>0,00</p>
+                <p className={styles.planos_price}>0,00</p>
                 <ul>
                     <li>* Limite de quizzes diários.</li>
                     <hr/>
@@ -14,12 +14,12 @@ export default function Planos() {
                     <hr/>
                     <li>* Exibição de anúncios entre os quizzes.</li>
                 </ul>
-                <button className="planos-btn">Escolher</button>
+                <button className={styles.planos_btn}>Escolher</button>
             </div>
-            <div className="planos-item">
+            <div className={styles.planos_item}>
                 <h2>Plano Premium</h2>
                 <span>R$</span>
-                <p>19,00</p>
+                <p className={styles.planos_price}>19,00</p>
                 <ul>
                     <li>* Sem limite diário de quizzes.</li>
                     <hr/>
@@ -27,7 +27,7 @@ export default function Planos() {
                     <hr/>
                     <li>* Experiência sem interrupções com a remoção de anúncios.</li>
                 </ul>
-                <button className="planos-btn">Escolher</button>
+                <button className={styles.planos_btn}>Escolher</button>
             </div>
         </section>
     )

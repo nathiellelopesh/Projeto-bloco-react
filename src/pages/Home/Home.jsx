@@ -1,4 +1,4 @@
-import './home.css'
+
 import Header from "../../Components/HeaderHome/Header";
 import Description from '../../Components/Description/Description';
 import Planos from '../../Components/Planos/Planos';

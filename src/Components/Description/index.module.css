@@ -1,11 +1,11 @@
-.desription-container {
+.desription_container {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
 }
 
-.description-item {
+.description_item {
     border: 1px solid #1a0279;
     width: 70vw;
     margin: 20px;
@@ -16,18 +16,18 @@
     padding: 8px;
 }
 
-.description-item > img {
+.description_item > img {
     width: 150px;
     flex: 1;
 }
 
-.description-item > p {
+.description_item > p {
     font-weight: bold;
 }
 
 @media (min-width: 500px) {
 
-    .description-item {
+    .description_item {
         width: 300px;
         height: 150px;
     }
