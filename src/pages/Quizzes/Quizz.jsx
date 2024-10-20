@@ -16,6 +16,7 @@ export default function Quizz() {
     const [showId, setShowId] = useState(null)
     const [genreListId, setGenreListId] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [quizzIndex, setQuizzIndex] = useState(0);
     
     const private_key = import.meta.env.VITE_PRIVATE_API_KEY;
 
@@ -68,7 +69,7 @@ export default function Quizz() {
           response = await tmdbApi.get(`/discover/movie?include_adult=false&include_video=true&language=en-US&page=1&sort_by=popularity.desc&with_genres=${generoId}&year=${ano}`)
         }
         
-        //console.log(response.data);
+        console.log("lista de filmes: ", response.data);
         return response;
       } catch (error) {
         console.error("Erro em moviesList", error);
@@ -108,9 +109,7 @@ export default function Quizz() {
         if(categoria === 'movies') {
             allResults = [...(moviesResponse && moviesResponse.data ? moviesResponse.data.results : [])]
         } else if (categoria === 'series') {
-          
             allResults = [...(serieResponse && serieResponse.data ? serieResponse.data.results : [])];
-          
         }
 
         setFilteredList(allResults);
@@ -118,7 +117,8 @@ export default function Quizz() {
         console.log('All Results:', allResults);
 
         if (allResults.length > 0) {
-          setShowId(allResults[0].id);
+          const indexAllResults = Math.floor(Math.random() * allResults.length);
+          setShowId(allResults[indexAllResults].id);
         } else {
           console.log('Nenhum resultado encontrado.');
         }
@@ -134,13 +134,14 @@ export default function Quizz() {
       fetchAllData() 
     }, [ano, genero, categoria])
 
-    async function movieDetails() {
+    async function streamDetails() {
       if (showId) {
         try {
-          const response = await tmdbApi.get(`/movie/${showId}?language=en-US`);
-          //console.log("Detalhes do filme",response.data);
+          const currentCategory = categoria === 'movies' ? 'movie' : 'tv';
+          const response = await tmdbApi.get(`/${currentCategory}/${showId}?language=en-US`);
+          console.log("Detalhes: ",response.data);
 
-          if(categoria === 'movies') {setShowDetails(response.data)}
+          setShowDetails(response.data)
           
         } catch (error) {
           console.log(error);
@@ -148,29 +149,17 @@ export default function Quizz() {
       }
     }
 
-    async function serieDetails() {
-      if (showId) {
-        try {
-          const response = await tmdbApi.get(`/tv/${showId}?language=en-US`)
-          console.log("Detalhes da série", response.data);
-
-          if(categoria === 'series') {setShowDetails(response.data)}
-        } catch (error) {
-          console.log("erro ao achar detalhes da série", error)
-        }
-      }
-    }
-
     useEffect(() => {
-      movieDetails()
-      serieDetails()
+      streamDetails()
     }, [showId])
 
     const handleNext = () => {
       const currentIndex = filteredList.findIndex(show => show.id === showId);
-      if (currentIndex >= 0 && currentIndex < 5) {
+      if (currentIndex >= 0 && currentIndex < filteredList.length - 1) {
         // Define o próximo showId com base no próximo item da lista
         setShowId(filteredList[currentIndex + 1].id);
+        // Alterna entre Quizz1 e Quizz2
+        setQuizzIndex((prev) => (prev + 1) % 2);
       } else {
         alert("Não há mais perguntas.");
       }
@@ -194,7 +183,8 @@ export default function Quizz() {
 
           {loading ? (<p>LOADING...</p>) : (filteredList.length > 0 ? (
               <>
-              {/*<Quizz1
+              {quizzIndex === 0 && (
+              <Quizz1
                 key={showDetails.id}
                 image={showDetails.poster_path ? `https://image.tmdb.org/t/p/w500${showDetails.poster_path}` : 'placeholder-image-url'} 
                 nome={showDetails.title}
@@ -204,8 +194,9 @@ export default function Quizz() {
                 filteredList={filteredList}
                 tmdbApi={tmdbApi}
                 categoria={categoria}
-              />*/}
-
+              />
+              )}
+              {quizzIndex === 1 && (
               <Quizz2
                 key={showDetails.id} 
                 
@@ -216,7 +207,7 @@ export default function Quizz() {
                 tmdbApi={tmdbApi}
                 categoria={categoria}
               />
-
+              )}
               </>
           ) : (
             <p>Not Found</p>

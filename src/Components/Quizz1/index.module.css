@@ -28,7 +28,7 @@
     margin: 10px;
 }
 
-.quizz1_container > div > span:hover {
+.quizz_container > div > span:hover {
     cursor: pointer;
     background-color: #1a0279;
     color: #fff;
@@ -70,4 +70,5 @@
 
 .header_btn:hover {
     background-color: #1a0279;
+
 }
