@@ -1,7 +1,8 @@
+import BasicButtons from '../Button/Button';
 import styles from './index.module.css'
 import { useEffect, useState } from 'react';
 
-export default function Quizz2({ nextQuestion, filteredList, tmdbApi, categoria }) {
+export default function Quizz2({ nextQuestion, filteredList, tmdbApi, categoria, updateTotalScore }) {
     const [selectedVideo, setSelectedVideo] = useState(null);
     const [classSelected, setClassSelected] = useState(false)
     const [score, setScore] = useState(0);
@@ -9,6 +10,13 @@ export default function Quizz2({ nextQuestion, filteredList, tmdbApi, categoria 
     const [randomIds, setRandomIds] = useState([]);
     const [overview, setOverview] = useState('')
     const [idOverview, setIdOverview] = useState('')
+
+    function handleNextButton() {
+      
+        updateTotalScore(score);
+        setScore(0);
+        nextQuestion()
+    }
 
     function handleSelected(videoId) {
         setClassSelected(!classSelected)
@@ -28,7 +36,8 @@ export default function Quizz2({ nextQuestion, filteredList, tmdbApi, categoria 
                 setSelectedVideo('')
                 setScore(0)
             }
-        }        
+        }
+        
     }
 
     async function getVideo1() {
@@ -187,7 +196,8 @@ export default function Quizz2({ nextQuestion, filteredList, tmdbApi, categoria 
                 }
                 
             </div>
-            <button onClick={nextQuestion} className={styles.header_btn}>Next</button>
+            <BasicButtons onclickFunction={handleNextButton} variant={"contained"} text={"Next"}/>
+            
             <div className={styles.showPoints}>
                 <p className={styles.points}>Points: {score}</p>
             </div>

@@ -1,14 +1,21 @@
 import { useState, useEffect } from 'react'
 import styles from './index.module.css'
 import { all } from 'axios';
+import BasicButtons from '../Button/Button';
 
-export default function Quizz1 ({image, nome, nextQuestion, showId, filteredList, tmdbApi, categoria }) {
+export default function Quizz1 ({image, nome, nextQuestion, showId, filteredList, tmdbApi, categoria, updateTotalScore  }) {
     
     const [selectedWords, setSelectedWords] = useState([]);
     const [score, setScore] = useState(0);
     const [rightKeywords, setRightKeywords] = useState([]);
     const [wordsList, setWordsList] = useState([]);
 
+    function handleNextButton() {
+      
+      updateTotalScore(score);
+      setScore(0);
+      nextQuestion()
+    }
 
     function handleSelected(word) {
       if (selectedWords.length < 2) {
@@ -24,8 +31,9 @@ export default function Quizz1 ({image, nome, nextQuestion, showId, filteredList
           setScore((prev) => prev - 1); 
         }
       }
-        
+      
     }
+
 
     //Palavras-chave do poster correto
     async function currentIdKeywords() {
@@ -43,7 +51,7 @@ export default function Quizz1 ({image, nome, nextQuestion, showId, filteredList
           if (keywords && keywords.length > 0) {
             setWordsList(keywords);
             setRightKeywords(keywords);
-            console.log("palavras-chave corretas: ", keywords);
+            //console.log("palavras-chave corretas: ", keywords);
             return keywords; // Retorna se encontrar palavras
           } else {
             console.log(`Nenhuma palavra-chave encontrada para ID: ${randomId}`);
@@ -71,7 +79,7 @@ export default function Quizz1 ({image, nome, nextQuestion, showId, filteredList
         const keywords = categoria === 'movies' ? response.data.keywords : response.data.results
         
         setWordsList((prevWords) => [...prevWords, ...keywords]);
-        console.log("palavras-chave aleatorias: ", keywords)
+        //console.log("palavras-chave aleatorias: ", keywords)
         
       } catch (error) {
         console.log("Erro ao coletar palavras chaves aleatorias", error)
@@ -95,20 +103,20 @@ export default function Quizz1 ({image, nome, nextQuestion, showId, filteredList
             <h3>Select 2 words related to the show</h3>
             <img src={image} alt={nome}/>
             <div>
-                {wordsList.map((word) => (
+                {wordsList.map((word, i) => (
                     <span
-                        key={word.id}
+                        key={i}
                         onClick={() => handleSelected(word.name)}
                         className={`${selectedWords.includes(word.name) ? styles.selected : styles.notSelected}`}
                     >
                         {word.name}
                     </span>
                 ))}
-                <button onClick={nextQuestion} className={styles.header_btn}>Next</button>
+                <BasicButtons onclickFunction={handleNextButton} variant={"contained"} text={"Next"}/>
+                
             </div>
             <div className={styles.showPoints}>
                 <p className={styles.points}>Points: {score}</p>
-                
             </div>
             
         </section>

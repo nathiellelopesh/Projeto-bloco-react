@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import Filter from '../../Components/Filter/Filter';
 import HeaderUser from '../../Components/HeaderUser/HeaderUser';
 import Footer from '../../Components/Footer/Footer';
-import axios from 'axios';
+import axios, { all } from 'axios';
 import Quizz1 from '../../Components/Quizz1/Quizz1';
 import Quizz2 from '../../Components/Quizz2/Quizz2';
 import styles from './index.module.css'
+import Quizz3 from '../../Components/Quizz3/Quizz3';
+import Quizz4 from '../../Components/Quizz4/Quizz4';
 
 export default function Quizz() {
     const [ano, setAno] = useState('');
@@ -16,7 +18,8 @@ export default function Quizz() {
     const [showId, setShowId] = useState(null)
     const [genreListId, setGenreListId] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [quizzIndex, setQuizzIndex] = useState(0);
+    const [quizzIndex, setQuizzIndex] = useState(1);
+    const [allScore, setAllScore] = useState([]);
     
     const private_key = import.meta.env.VITE_PRIVATE_API_KEY;
 
@@ -69,7 +72,7 @@ export default function Quizz() {
           response = await tmdbApi.get(`/discover/movie?include_adult=false&include_video=true&language=en-US&page=1&sort_by=popularity.desc&with_genres=${generoId}&year=${ano}`)
         }
         
-        console.log("lista de filmes: ", response.data);
+        //console.log("lista de filmes: ", response.data);
         return response;
       } catch (error) {
         console.error("Erro em moviesList", error);
@@ -87,7 +90,7 @@ export default function Quizz() {
           response = await tmdbApi.get(`/discover/tv?first_air_date_year=${ano}&include_adult=false&include_null_first_air_dates=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=${generoId}`)
         }
         
-        console.log("lista de séries: ", response.data.results);
+        //console.log("lista de séries: ", response.data.results);
         return response;
       } catch (error) {
         console.error("Erro em seriesList", error);
@@ -98,6 +101,7 @@ export default function Quizz() {
     async function fetchAllData() {
       setFilteredList([]);
       setLoading(true);
+      setQuizzIndex(1)
       try {
 
         const moviesResponse = await moviesList();
@@ -114,7 +118,7 @@ export default function Quizz() {
 
         setFilteredList(allResults);
 
-        console.log('All Results:', allResults);
+        //console.log('All Results:', allResults);
 
         if (allResults.length > 0) {
           const indexAllResults = Math.floor(Math.random() * allResults.length);
@@ -131,15 +135,17 @@ export default function Quizz() {
     }
 
     useEffect(() => {
-      fetchAllData() 
+      fetchAllData()
     }, [ano, genero, categoria])
 
+
+    //stream atual
     async function streamDetails() {
       if (showId) {
         try {
           const currentCategory = categoria === 'movies' ? 'movie' : 'tv';
           const response = await tmdbApi.get(`/${currentCategory}/${showId}?language=en-US`);
-          console.log("Detalhes: ",response.data);
+          //console.log("Detalhes: ",response.data);
 
           setShowDetails(response.data)
           
@@ -151,19 +157,45 @@ export default function Quizz() {
 
     useEffect(() => {
       streamDetails()
+      //console.log(filteredList)
     }, [showId])
 
-    const handleNext = () => {
-      const currentIndex = filteredList.findIndex(show => show.id === showId);
-      if (currentIndex >= 0 && currentIndex < filteredList.length - 1) {
-        // Define o próximo showId com base no próximo item da lista
-        setShowId(filteredList[currentIndex + 1].id);
-        // Alterna entre Quizz1 e Quizz2
-        setQuizzIndex((prev) => (prev + 1) % 2);
-      } else {
-        alert("Não há mais perguntas.");
-      }
+    function handleNext() {
+
+      setQuizzIndex((prevIndex) => {
+        if (prevIndex < 6) { 
+          return prevIndex + 1;
+        } else {
+          return prevIndex; // Se chegou ao final, mantém o último índice
+        }
+      });
+      //console.log("quizzIndex:", quizzIndex);
     };
+
+    const updateTotalScore1 = (uniqueScore) => {
+      console.log("score1: ", uniqueScore)
+      setAllScore([uniqueScore])
+    };
+
+    const updateTotalScore2 = (uniqueScore) => {
+      console.log("score2: ", uniqueScore)
+      setAllScore(prev => [...prev, uniqueScore])
+    };
+
+    const updateTotalScore3 = (uniqueScore) => {
+      console.log("score3: ", uniqueScore)
+      setAllScore(prev => [...prev, uniqueScore])
+    };
+
+    const updateTotalScore4 = (uniqueScore) => {
+      console.log("score4: ", uniqueScore)
+      setAllScore(prev => [...prev, uniqueScore])
+    };
+
+    useEffect(() => {
+      console.log('array de score:', allScore)
+    }, [allScore])
+    
 
     return (
         <section className={styles.user_page}>
@@ -183,31 +215,53 @@ export default function Quizz() {
 
           {loading ? (<p>LOADING...</p>) : (filteredList.length > 0 ? (
               <>
-              {quizzIndex === 0 && (
-              <Quizz1
-                key={showDetails.id}
-                image={showDetails.poster_path ? `https://image.tmdb.org/t/p/w500${showDetails.poster_path}` : 'placeholder-image-url'} 
-                nome={showDetails.title}
-                handleNext={handleNext}
-                nextQuestion={() => handleNext()}
-                showId={showId}
-                filteredList={filteredList}
-                tmdbApi={tmdbApi}
-                categoria={categoria}
-              />
-              )}
-              {quizzIndex === 1 && (
-              <Quizz2
-                key={showDetails.id} 
-                
-                handleNext={handleNext}
-                nextQuestion={() => handleNext()}
-                showId={showId}
-                filteredList={filteredList}
-                tmdbApi={tmdbApi}
-                categoria={categoria}
-              />
-              )}
+              {quizzIndex === 1 && 
+                <Quizz1
+                  key={showDetails.id}
+                  image={showDetails.poster_path ? `https://image.tmdb.org/t/p/w500${showDetails.poster_path}` : 'placeholder-image-url'} 
+                  nome={showDetails.title}
+                  nextQuestion={handleNext}
+                  showId={showId}
+                  filteredList={filteredList}
+                  tmdbApi={tmdbApi}
+                  categoria={categoria}
+                  updateTotalScore={updateTotalScore1}
+                />
+              }
+              
+              {quizzIndex === 2 &&
+                <Quizz2
+                  key={showDetails.id} 
+                  nextQuestion={handleNext}
+                  showId={showId}
+                  filteredList={filteredList}
+                  tmdbApi={tmdbApi}
+                  categoria={categoria}
+                  updateTotalScore={updateTotalScore2}
+                />
+              }
+
+              {quizzIndex === 3 &&
+                <Quizz3
+                  filteredList={filteredList}
+                  nextQuestion={handleNext}
+                  updateTotalScore={updateTotalScore3}
+                />
+              }
+
+              {quizzIndex === 4 &&
+                <Quizz4
+                  filteredList={filteredList}
+                  nextQuestion={handleNext}
+                  updateTotalScore={updateTotalScore4}
+                />
+              }
+
+              {quizzIndex === 5 && (
+                <section>
+                  <h3>End of Questions!!</h3>
+                  <h4>Total points: {allScore.reduce((acc, score) => acc + score, 0)}</h4>
+                </section>)}
               </>
           ) : (
             <p>Not Found</p>
