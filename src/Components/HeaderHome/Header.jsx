@@ -10,8 +10,8 @@ export default function Header() {
             <div className={styles.header_nav}>
                 <BiSolidCameraMovie  size={"2.5rem"} color="white"/>
                 <div className={styles.header_buttons}>
-                    <Link to='/quizz' className={styles.header_btn}>Cria Conta</Link>
-                    <Link to='/quizz' className={styles.header_btn}>Entrar</Link>
+                    <Link to='/signup' className={styles.header_btn}>Cria Conta</Link>
+                    <Link to='/signin' className={styles.header_btn}>Entrar</Link>
                 </div>
             </div>
             

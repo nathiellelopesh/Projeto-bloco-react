@@ -4,3 +4,15 @@
     background-color: #1a0279;
     padding: 20px 35px;
 }
+
+.sair {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sair > p {
+    color: #fff;
+}

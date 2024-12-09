@@ -11,7 +11,6 @@ export default function Quizz1 ({image, nome, nextQuestion, showId, filteredList
     const [wordsList, setWordsList] = useState([]);
 
     function handleNextButton() {
-      
       updateTotalScore(score);
       setScore(0);
       nextQuestion()
@@ -67,7 +66,7 @@ export default function Quizz1 ({image, nome, nextQuestion, showId, filteredList
     }
   
       
-      //palavras-chave para mesclar com as palavras corretas
+    //palavras-chave para mesclar com as palavras corretas
     async function randomWords() {
       try {
         
